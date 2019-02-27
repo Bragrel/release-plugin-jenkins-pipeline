@@ -1,0 +1,11 @@
+subprojects {
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+//task uberBuild(dependsOn: project(":app:hello")) {
+//    println "I'm $task.project.name"
+//}
