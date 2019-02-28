@@ -7,20 +7,13 @@ pipeline {
                 checkout scm
             }
         }
+
         stage('Build') {
             steps {
                 sh "./gradlew build"
 
             }
         }
-
-        stage('Deploy to Artifactory') {
-            steps {
-                sh "./gradlew artifactoryPublish"
-
-            }
-        }
-
 
         stage('Deploy to Develop') {
             when {
@@ -31,6 +24,7 @@ pipeline {
                 script {
                     docker.build("release-plugin-jenkins-pipeline:develop")
                 }
+                sh "./gradlew artifactoryPublish"
             }
         }
 
