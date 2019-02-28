@@ -22,34 +22,40 @@ pipeline {
         }
 
 
-        stage('Deploy to Develop'){
+        stage('Deploy to Develop') {
             when {
                 branch 'develop'
             }
-            steps{
+            steps {
                 sh "\$(/home/tomcat/.local/bin/aws ecr get-login --no-include-email --region us-east-1)"
-                docker.build("release-plugin-jenkins-pipeline:develop")
+                script {
+                    docker.build("release-plugin-jenkins-pipeline:develop")
+                }
             }
         }
 
-        stage('Deploy to Staging'){
+        stage('Deploy to Staging') {
             when {
                 branch 'release'
             }
-            steps{
+            steps {
                 sh "./gradlew release -Prelease.useAutomaticVersion=true"
                 sh "\$(/home/tomcat/.local/bin/aws ecr get-login --no-include-email --region us-east-1)"
-                docker.build("release-plugin-jenkins-pipeline:staging")
+                script {
+                    docker.build("release-plugin-jenkins-pipeline:staging")
+                }
             }
         }
 
-        stage('Deploy to Prod'){
+        stage('Deploy to Prod') {
             when {
                 branch 'master'
             }
-            steps{
+            steps {
                 sh "\$(/home/tomcat/.local/bin/aws ecr get-login --no-include-email --region us-east-1)"
-                docker.build("release-plugin-jenkins-pipeline:latest")
+                script {
+                    docker.build("release-plugin-jenkins-pipeline:latest")
+                }
             }
         }
 
