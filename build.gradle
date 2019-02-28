@@ -114,7 +114,8 @@ release {
     tagTemplate = '${version}'
     failOnUnversionedFiles = false
     failOnSnapshotDependencies = false
+    pushReleaseVersionBranch='master'
     git {
-        requireBranch = 'master'
+        requireBranch = 'develop'
     }
 }
