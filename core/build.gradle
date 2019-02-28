@@ -1,3 +1,19 @@
+description = 'core'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+install {
+    repositories.mavenInstaller {
+        pom.artifactId = 'core'
+    }
+}
+
+
+jar {
+    enabled=true
+}
+
 dependencies {
     testCompile 'junit:junit:4.11'
 }

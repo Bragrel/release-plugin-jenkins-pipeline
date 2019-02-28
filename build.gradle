@@ -1,11 +1,120 @@
-subprojects {
-    apply plugin: 'java'
-
+buildscript {
     repositories {
-        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4+"
     }
 }
 
-//task uberBuild(dependsOn: project(":app:hello")) {
-//    println "I'm $task.project.name"
-//}
+plugins {
+    id 'net.researchgate.release' version '2.8.0'
+}
+apply plugin: "com.jfrog.artifactory"
+apply plugin: 'maven-publish'
+
+task build {}
+
+task buildService(type: GradleBuild) {
+    dir = "core"
+    tasks = ["build"]
+}
+
+task buildCommon(type: GradleBuild) {
+    dir = "app"
+    tasks = ["build"]
+}
+
+build.dependsOn(buildCommon)
+build.dependsOn(buildService)
+
+allprojects {
+    apply plugin: 'com.jfrog.artifactory'
+    apply plugin: 'idea'
+    group = 'net.petrikainulainen.gradle.core'
+
+    configure(subprojects.findAll { new File(it.projectDir, 'src').directory }) {
+        apply plugin: 'java'
+    }
+
+    repositories {
+        mavenLocal()
+        maven {
+            url "${artifactory_contextUrl}/libs"
+            credentials {
+                username "${artifactory_user}"
+                password "${artifactory_password}"
+            }
+        }
+        mavenCentral()
+        maven { url 'https://repo.locationtech.org/content/repositories/jts-snapshots' }
+    }
+}
+
+subprojects {
+    apply plugin: 'maven'
+
+    if (project.plugins.hasPlugin('java')) {
+        configurations {
+            published
+        }
+        task sourceJar(type: Jar) {
+            from sourceSets.main.allSource
+            classifier = 'sources'
+        }
+        artifactoryPublish {
+            dependsOn sourceJar
+        }
+        artifacts {
+            published sourceJar
+        }
+    }
+}
+
+task artifactoryPublishWorkaround(type: GradleBuild) {
+    dir = "."
+    tasks = ["artifactoryPublish"]
+}
+
+afterReleaseBuild.dependsOn(artifactoryPublishWorkaround)
+
+release {
+    buildTasks = ['build']
+}
+
+def getRepo = {
+    String ver = project.version
+    if (ver.endsWith('SNAPSHOT')) {
+        return 'libs-snapshot-local'
+    } else {
+        return 'libs-release-local'
+    }
+}
+
+artifactoryPublish.skip = true
+
+artifactory {
+    contextUrl = "${artifactory_contextUrl}"
+    publish {
+        repository {
+            repoKey = getRepo()
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+        }
+        defaults {
+            publishConfigs('archives', 'published')
+            publishIvy = false
+        }
+    }
+}
+
+release {
+    tagTemplate = '${version}'
+    failOnUnversionedFiles = false
+    failOnSnapshotDependencies = false
+    git {
+        requireBranch = 'master'
+    }
+}

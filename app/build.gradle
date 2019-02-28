@@ -1,68 +1,19 @@
-buildscript {
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        //Check for the latest version here: http://plugins.gradle.org/plugin/com.jfrog.artifactory
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.8.1"
-    }
-}
-
 plugins {
     id 'org.springframework.boot' version '2.1.1.RELEASE'
-//    id 'net.researchgate.release' //version '2.6.0'
 }
 
-//apply plugin: 'application'
+description = 'core'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+install {
+    repositories.mavenInstaller {
+        pom.artifactId = 'app'
+    }
+}
 
 dependencies {
     compile 'log4j:log4j:1.2.17'
     compile project(':core')
-}
-
-//mainClassName = 'net.petrikainulainen.gradle.client.HelloWorld'
-
-task copyLicense {
-    outputs.file new File("$buildDir/LICENSE")
-    doLast {
-        copy {
-            from "LICENSE"
-            into "$buildDir"
-        }
-    }
-}
-
-//applicationDistribution.from(copyLicense) {
-//    into ""
-//}
-
-
-
-build.dependsOn(bootJar)
-//release.dependsOn(artifactoryPublish)
-
-allprojects {
-    apply plugin: "com.jfrog.artifactory"
-}
-
-artifactory {
-    contextUrl = "${artifactory_contextUrl}"
-    publish {
-        repository {
-            repoKey = 'libs-release-local'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-            maven = true
-        }
-    }
-    resolve {
-        repository {
-            repoKey = 'libs-release'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-            maven = true
-        }
-    }
 }
