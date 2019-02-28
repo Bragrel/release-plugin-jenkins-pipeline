@@ -111,7 +111,6 @@ artifactory {
 }
 
 release {
-    tagTemplate = '${version}'
     failOnUnversionedFiles = false
     failOnSnapshotDependencies = false
     pushReleaseVersionBranch='master'
