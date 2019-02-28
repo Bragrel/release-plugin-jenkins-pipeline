@@ -113,8 +113,8 @@ artifactory {
 release {
     failOnUnversionedFiles = false
     failOnSnapshotDependencies = false
-    pushReleaseVersionBranch='master'
+//    pushReleaseVersionBranch='master'
     git {
-        requireBranch = 'develop'
+        requireBranch = 'release'
     }
 }
