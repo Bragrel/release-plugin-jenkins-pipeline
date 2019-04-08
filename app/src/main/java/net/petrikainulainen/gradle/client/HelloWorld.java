@@ -12,6 +12,7 @@ public class HelloWorld {
 
     public static void main(String[] args) {
         MessageService messageService = new MessageService();
+        messageService = new MessageService();
 
         //unused code
         String message = messageService.getMessage();
