@@ -12,8 +12,10 @@ public class HelloWorld {
 
     public static void main(String[] args) {
         MessageService messageService = new MessageService();
+          messageService = new MessageService();
 
         String message = messageService.getMessage();
+        LOGGER.info("Received message: " + message);
         LOGGER.info("Received message: " + message);
     }
 }

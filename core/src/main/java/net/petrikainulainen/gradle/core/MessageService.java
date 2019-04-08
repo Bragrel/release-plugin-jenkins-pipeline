@@ -8,4 +8,7 @@ public class MessageService {
     public String getMessage() {
         return "Hello World!";
     }
+    public String getMessage1() {
+        return "Hello World!";
+    }
 }
