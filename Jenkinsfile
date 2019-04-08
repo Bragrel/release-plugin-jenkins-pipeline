@@ -30,7 +30,7 @@ pipeline {
 
         stage('Deploy to Staging') {
             when {
-                branch 'release'
+                expression { BRANCH_NAME ==~ /release\/[0-9]+\.[0-9]+\.[0-9]+/ }
             }
             steps {
                 sh "./gradlew release -Prelease.useAutomaticVersion=true"

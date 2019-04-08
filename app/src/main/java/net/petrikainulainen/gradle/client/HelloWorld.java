@@ -13,7 +13,9 @@ public class HelloWorld {
     public static void main(String[] args) {
         MessageService messageService = new MessageService();
 
+        //unused code
         String message = messageService.getMessage();
+        message = messageService.getMessage();
         LOGGER.info("Received message: " + message);
     }
 }
